@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'registration.dart'; // Import the Register Screen
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -97,7 +98,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         isPassword: true,
                       ),
 
-                      // Spacing (Removed Forgot Password)
                       const SizedBox(height: 24),
 
                       // Login Button
@@ -106,10 +106,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 48,
                         child: ElevatedButton(
                           onPressed: () {
+                            // TODO: Add Navigation to Home Dashboard
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text("Login Clicked")),
                             );
-                            // TODO: Add Navigation to Home
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF6A5AE0),
@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 20),
 
-                      // "Don't have an account?" (Kept this for navigation)
+                      // "Don't have an account?" -> Navigates to RegisterScreen
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -141,7 +141,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              // TODO: Navigate to Register Screen
+                              // Navigate to Register Screen
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const RegisterScreen(),
+                                ),
+                              );
                             },
                             child: const Text(
                               "Register Now",
@@ -154,8 +160,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-
-                      // Removed Social Login Buttons and Divider
                     ],
                   ),
                 ),
