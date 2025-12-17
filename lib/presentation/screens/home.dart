@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/trip_card.dart';
 import 'trips.dart';
 import 'profile.dart';
-// import 'create_trip_screen.dart'; // Keep for future use
+import 'create_trip_screen.dart'; // Keep for future use
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -164,7 +164,12 @@ class HomeDashboardTab extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     // Navigate to CreateTripScreen
-                    // Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateTripScreen()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const CreateTripScreen(),
+                      ),
+                    );
                   },
                   child: Container(
                     width: double.infinity, // Full Width

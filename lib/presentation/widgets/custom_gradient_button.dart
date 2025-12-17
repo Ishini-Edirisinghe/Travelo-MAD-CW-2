@@ -1,41 +1,61 @@
 import 'package:flutter/material.dart';
 
-class WeatherCard extends StatelessWidget {
-  final String city;
-  final double temp;
-  final String description;
-  final String iconCode;
+class CustomGradientButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final double width;
+  final double height;
+  final double borderRadius;
 
-  const WeatherCard({
+  const CustomGradientButton({
     super.key,
-    required this.city,
-    required this.temp,
-    required this.description,
-    required this.iconCode,
+    required this.text,
+    required this.onPressed,
+    this.width = double.infinity,
+    this.height = 55.0,
+    this.borderRadius = 15.0,
   });
 
   @override
   Widget build(BuildContext context) {
-    final iconUrl = 'https://openweathermap.org/img/wn/$iconCode@2x.png';
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          children: [
-            Image.network(iconUrl, width: 64, height: 64),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(city, style: Theme.of(context).textTheme.titleLarge),
-                Text(
-                  '${temp.toStringAsFixed(1)} °C',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                Text(description),
-              ],
-            ),
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF6A5AE0), // Purple
+            Color(0xFFE252CA), // Pink/Magenta
           ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(borderRadius),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF6A5AE0).withOpacity(0.4),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
         ),
       ),
     );
