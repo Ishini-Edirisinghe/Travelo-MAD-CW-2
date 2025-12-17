@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/trip_card.dart';
-// Import the new screens
 import 'trips.dart';
 import 'profile.dart';
-// import 'create_trip_screen.dart'; // Keep this for the "New Trip" button action later
+// import 'create_trip_screen.dart'; // Keep for future use
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,21 +14,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  // The 3 Main Tabs
   final List<Widget> _pages = [
-    const HomeDashboardTab(), // Index 0: Home Dashboard (Defined below)
-    const TripsScreen(), // Index 1: The separate Trips Screen
-    const ProfileScreen(), // Index 2: The separate Profile Screen
+    const HomeDashboardTab(),
+    const TripsScreen(),
+    const ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
-      // Displays the selected screen from _pages list
       body: _pages[_currentIndex],
-
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
@@ -64,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 // ==========================================
-// THE MAIN DASHBOARD TAB (Matches Home Image)
+// THE MAIN DASHBOARD TAB
 // ==========================================
 class HomeDashboardTab extends StatelessWidget {
   const HomeDashboardTab({super.key});
@@ -75,13 +70,13 @@ class HomeDashboardTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. HEADER SECTION (Gradient + Stats)
+          // 1. HEADER SECTION
           Stack(
             clipBehavior: Clip.none,
             children: [
               // Gradient Background
               Container(
-                height: 280,
+                height: 250,
                 padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -89,9 +84,6 @@ class HomeDashboardTab extends StatelessWidget {
                     end: Alignment.bottomRight,
                     colors: [Color(0xFF6A5AE0), Color(0xFFE252CA)],
                   ),
-                  // borderRadius: BorderRadius.vertical(
-                  //   bottom: Radius.circular(30),
-                  // ),
                 ),
                 child: Column(
                   children: [
@@ -101,10 +93,7 @@ class HomeDashboardTab extends StatelessWidget {
                         const CircleAvatar(
                           radius: 24,
                           backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.person,
-                            color: Color(0xFF6A5AE0),
-                          ), // Placeholder
+                          child: Icon(Icons.person, color: Color(0xFF6A5AE0)),
                         ),
                         const SizedBox(width: 12),
                         const Expanded(
@@ -129,18 +118,7 @@ class HomeDashboardTab extends StatelessWidget {
                             ],
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.settings,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
+                        // REMOVED SETTINGS ICON HERE
                       ],
                     ),
                   ],
@@ -155,9 +133,7 @@ class HomeDashboardTab extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(
-                      0.2,
-                    ), // Glassmorphism effect
+                    color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: Colors.white.withOpacity(0.3)),
                   ),
@@ -174,30 +150,27 @@ class HomeDashboardTab extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 60), // Space for floating box
-          // 2. QUICK ACTIONS
+          const SizedBox(height: 30),
+
+          // 2. QUICK ACTION BUTTON (Modified)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Quick Actions",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 15),
+                // REMOVED "Quick Actions" TEXT HERE
 
-                // Only "+ New Trip" Button as requested
+                // Full Width "+ New Trip" Button
                 GestureDetector(
                   onTap: () {
                     // Navigate to CreateTripScreen
                     // Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateTripScreen()));
                   },
                   child: Container(
-                    width: 160,
-                    padding: const EdgeInsets.all(20),
+                    width: double.infinity, // Full Width
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2D9CDB), // Blue color from image
+                      color: const Color(0xFF2D9CDB),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
@@ -207,17 +180,17 @@ class HomeDashboardTab extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.add, color: Colors.white, size: 30),
-                        SizedBox(height: 10),
+                        Icon(Icons.add, color: Colors.white, size: 28),
+                        SizedBox(width: 10),
                         Text(
                           "New Trip",
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            fontSize: 18,
                           ),
                         ),
                       ],
@@ -228,7 +201,7 @@ class HomeDashboardTab extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 30),
+          const SizedBox(height: 10),
 
           // 3. MY TRIPS SECTION
           Padding(
@@ -241,9 +214,7 @@ class HomeDashboardTab extends StatelessWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 TextButton(
-                  onPressed: () {
-                    // This could switch tabs to index 1 if you want
-                  },
+                  onPressed: () {},
                   child: const Text(
                     "See all",
                     style: TextStyle(color: Color(0xFF6A5AE0)),
@@ -258,7 +229,6 @@ class HomeDashboardTab extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                // Dummy Card 1
                 TripCard(
                   title: "Bali, Indonesia",
                   date: "Dec 20 - Dec 27, 2024",
@@ -269,7 +239,6 @@ class HomeDashboardTab extends StatelessWidget {
                   daysCount: 7,
                   onTap: () {},
                 ),
-                // Dummy Card 2
                 TripCard(
                   title: "Paris, France",
                   date: "Jan 10 - Jan 15, 2025",
@@ -289,7 +258,6 @@ class HomeDashboardTab extends StatelessWidget {
     );
   }
 
-  // Helper for Header Stats (White Text)
   Widget _buildHeaderStat(String label, String value) {
     return Column(
       children: [
