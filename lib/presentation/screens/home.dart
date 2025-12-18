@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import '../widgets/trip_card.dart';
-import 'trips.dart';
+import '../viewmodels/trip_viewmodel.dart';
+import 'create_trip_screen.dart';
+import 'trips.dart'; // Ensure this matches your file name (e.g., trips.dart or trips_screen.dart)
 import 'profile.dart';
-import 'create_trip_screen.dart'; // Keep for future use
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -74,7 +77,6 @@ class HomeDashboardTab extends StatelessWidget {
           Stack(
             clipBehavior: Clip.none,
             children: [
-              // Gradient Background
               Container(
                 height: 250,
                 padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
@@ -87,7 +89,6 @@ class HomeDashboardTab extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    // User Info Row
                     Row(
                       children: [
                         const CircleAvatar(
@@ -118,14 +119,11 @@ class HomeDashboardTab extends StatelessWidget {
                             ],
                           ),
                         ),
-                        // REMOVED SETTINGS ICON HERE
                       ],
                     ),
                   ],
                 ),
               ),
-
-              // Floating Stats Box
               Positioned(
                 top: 140,
                 left: 20,
@@ -152,108 +150,122 @@ class HomeDashboardTab extends StatelessWidget {
 
           const SizedBox(height: 30),
 
-          // 2. QUICK ACTION BUTTON (Modified)
+          // 2. QUICK ACTION
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // REMOVED "Quick Actions" TEXT HERE
-
-                // Full Width "+ New Trip" Button
-                GestureDetector(
-                  onTap: () {
-                    // Navigate to CreateTripScreen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const CreateTripScreen(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    width: double.infinity, // Full Width
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2D9CDB),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF2D9CDB).withOpacity(0.4),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CreateTripScreen()),
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2D9CDB),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF2D9CDB).withOpacity(0.4),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
                     ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add, color: Colors.white, size: 28),
-                        SizedBox(width: 10),
-                        Text(
-                          "New Trip",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  ],
                 ),
-              ],
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add, color: Colors.white, size: 28),
+                    SizedBox(width: 10),
+                    Text(
+                      "New Trip",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
 
           const SizedBox(height: 10),
 
-          // 3. MY TRIPS SECTION
+          // 3. RECENT TRIPS HEADER (With "See all" Navigation)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "My Trips",
+                  "Recent Trips",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
+
+                // --- UPDATED BUTTON HERE ---
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    // Navigate to the full Trips Screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const TripsScreen()),
+                    );
+                  },
                   child: const Text(
                     "See all",
                     style: TextStyle(color: Color(0xFF6A5AE0)),
                   ),
                 ),
+                // ---------------------------
               ],
             ),
           ),
 
-          // 4. TRIPS LIST
+          // 4. TRIPS LIST (Limit to 2)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                TripCard(
-                  title: "Bali, Indonesia",
-                  date: "Dec 20 - Dec 27, 2024",
-                  description:
-                      "A week of paradise beaches and cultural exploration.",
-                  imageUrl: "",
-                  placesCount: 5,
-                  daysCount: 7,
-                  onTap: () {},
-                ),
-                TripCard(
-                  title: "Paris, France",
-                  date: "Jan 10 - Jan 15, 2025",
-                  description: "Exploring art, museums, and coffee shops.",
-                  imageUrl: "",
-                  placesCount: 12,
-                  daysCount: 5,
-                  onTap: () {},
-                ),
-              ],
+            child: Consumer<TripViewModel>(
+              builder: (context, viewModel, child) {
+                if (viewModel.isLoading)
+                  return const Center(child: CircularProgressIndicator());
+                if (viewModel.trips.isEmpty) {
+                  return const Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Center(
+                      child: Text(
+                        "No trips yet. Plan your first one!",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  );
+                }
+
+                // Show only the top 2 items
+                final recentTrips = viewModel.trips.take(2).toList();
+
+                return Column(
+                  children: recentTrips.map((trip) {
+                    final dateRange =
+                        "${DateFormat('MMM d').format(trip.startDate)} - ${DateFormat('MMM d, yyyy').format(trip.endDate)}";
+                    final days =
+                        trip.endDate.difference(trip.startDate).inDays + 1;
+
+                    return TripCard(
+                      title: trip.title,
+                      date: dateRange,
+                      description: trip.description,
+                      imageUrl: trip.imagePath,
+                      placesCount: 0,
+                      daysCount: days,
+                      onTap: () {},
+                    );
+                  }).toList(),
+                );
+              },
             ),
           ),
 
