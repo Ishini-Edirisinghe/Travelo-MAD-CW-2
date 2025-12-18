@@ -14,8 +14,8 @@ void main() async {
 
   // Initialize Architecture Layers
   final localDataSource = LocalDataSource();
-  final tripRepository = TripRepositoryImpl(dataSource: localDataSource);
-
+  // CORRECT (Positional Argument)
+  final tripRepository = TripRepositoryImpl(localDataSource);
   runApp(
     MultiProvider(
       providers: [
