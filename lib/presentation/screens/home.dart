@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -70,6 +71,11 @@ class HomeDashboardTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    final String name = user?.displayName ?? "User";
+    final String email = user?.email ?? "No email";
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,14 +101,18 @@ class HomeDashboardTab extends StatelessWidget {
                         const CircleAvatar(
                           radius: 24,
                           backgroundColor: Colors.white,
-                          child: Icon(Icons.person, color: Color(0xFF6A5AE0)),
+                          child: Icon(
+                            Icons.person,
+                            color: Color(0xFF6A5AE0),
+                          ),
                         ),
                         const SizedBox(width: 12),
-                        const Expanded(
+
+                        Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 "Welcome back,",
                                 style: TextStyle(
                                   color: Colors.white70,
@@ -110,11 +120,18 @@ class HomeDashboardTab extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "Alex Johnson",
-                                style: TextStyle(
+                                name, 
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                email, 
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
                                 ),
                               ),
                             ],

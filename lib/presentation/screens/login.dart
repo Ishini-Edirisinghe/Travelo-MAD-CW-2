@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travelo/data/FirebaseServices/repository.dart';
 import 'registration.dart'; // Import Register Screen
 import 'home.dart'; // Import Home Screen
 
@@ -11,6 +12,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   // Controllers for text fields
+  final Repository repo = Repository();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
@@ -106,14 +108,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         height: 48,
                         child: ElevatedButton(
-                          onPressed: () {
-                            // NAVIGATE TO HOME SCREEN
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const HomeScreen(),
-                              ),
-                            );
+                          onPressed: ()async{
+                            if(_emailController.text.isNotEmpty || _passwordController.text.isNotEmpty){
+                              final res = await repo.signIn(email: _emailController.text, password: _passwordController.text);
+                              if(res.success){
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+                              }else{
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res.message??"")));
+                              }
+                            }else{
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Fields are required")));
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF6A5AE0),

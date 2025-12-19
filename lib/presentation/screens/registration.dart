@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travelo/data/FirebaseServices/repository.dart';
 import 'login.dart'; // Import LoginScreen for navigation
 
 class RegisterScreen extends StatefulWidget {
@@ -10,6 +11,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   // Controllers
+  final Repository repo = Repository();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -204,7 +206,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         width: double.infinity,
                         height: 48,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            // Check if terms are agreed
                             if (!_agreedToTerms) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -213,10 +216,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               );
                               return;
                             }
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Register Clicked")),
+
+                            // Check if fields are not empty
+                            if (_nameController.text.isEmpty ||
+                                _emailController.text.isEmpty ||
+                                _passwordController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("All fields are required")),
+                              );
+                              return;
+                            }
+
+                            // Call your sign-up logic
+                            final res = await repo.signUp(
+                              fullName: _nameController.text,
+                              email: _emailController.text,
+                              password: _passwordController.text,
                             );
-                            // TODO: Add Registration Logic Here
+
+                            if (res.success) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => LoginScreen()),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(res.message ?? "Registration failed")),
+                              );
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF6A5AE0),

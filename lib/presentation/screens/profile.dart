@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
-import 'login.dart'; // To handle logout navigation
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:travelo/presentation/screens/edit_profile_screen.dart';
+import 'login.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    final String name = user?.displayName ?? "User";
+    final String email = user?.email ?? "No email";
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -21,9 +28,6 @@ class ProfileScreen extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                // borderRadius: BorderRadius.vertical(
-                //   bottom: Radius.circular(30),
-                // ),
               ),
               child: Column(
                 children: [
@@ -44,17 +48,26 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    "Alex Johnson",
-                    style: TextStyle(
+
+                  // ✅ USER NAME
+                  Text(
+                    name,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
-                  const Text(
-                    "alex.johnson@example.com",
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
+
+                  const SizedBox(height: 4),
+
+                  // ✅ USER EMAIL
+                  Text(
+                    email,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
+                    ),
                   ),
                 ],
               ),
@@ -62,40 +75,39 @@ class ProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            // 2. Profile Options (Edit & Delete)
+            // 2. Profile Options
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  // Edit Profile Option
                   _buildProfileOption(
                     context,
                     icon: Icons.edit_outlined,
                     title: "Edit Profile",
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Edit Profile Clicked")),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EditProfileScreen(),
+                        ),
                       );
-                      // Navigate to Edit Profile Screen here
                     },
                   ),
 
                   const SizedBox(height: 15),
 
-                  // Delete Profile Option (Red styling)
                   _buildProfileOption(
                     context,
                     icon: Icons.delete_outline,
                     title: "Delete Profile",
                     isDestructive: true,
                     onTap: () {
-                      // Show Confirmation Dialog
                       showDialog(
                         context: context,
                         builder: (ctx) => AlertDialog(
                           title: const Text("Delete Profile"),
                           content: const Text(
-                            "Are you sure you want to delete your account? This action cannot be undone.",
+                            "Are you sure you want to delete your account?",
                           ),
                           actions: [
                             TextButton(
@@ -103,16 +115,39 @@ class ProfileScreen extends StatelessWidget {
                               child: const Text("Cancel"),
                             ),
                             TextButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 Navigator.pop(ctx);
-                                // Perform delete logic -> Navigate to Login
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const LoginScreen(),
-                                  ),
-                                  (route) => false,
-                                );
+                                if (user == null) return;
+
+                                try {
+                                  // DELETE AUTH ACCOUNT
+                                  await user.delete();
+
+                                  // Navigate to Login
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                                    (_) => false,
+                                  );
+                                } on FirebaseAuthException catch (e) {
+                                  if (e.code == 'requires-recent-login') {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          "Please log in again to delete your account.",
+                                        ),
+                                      ),
+                                    );
+
+                                    // Sign out & redirect to login
+                                    await FirebaseAuth.instance.signOut();
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                                      (_) => false,
+                                    );
+                                  }
+                                }
                               },
                               child: const Text(
                                 "Delete",
@@ -132,20 +167,19 @@ class ProfileScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Navigate back to login
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut();
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
                             builder: (_) => const LoginScreen(),
                           ),
-                          (route) => false,
+                          (_) => false,
                         );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF6A5AE0),
                         elevation: 5,
-                        shadowColor: const Color(0xFF6A5AE0).withOpacity(0.4),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -176,7 +210,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  // Helper Widget for Options
   Widget _buildProfileOption(
     BuildContext context, {
     required IconData icon,
