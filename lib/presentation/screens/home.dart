@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:travelo/presentation/screens/favorites_screen.dart';
 import '../widgets/trip_card.dart';
 import '../viewmodels/trip_viewmodel.dart';
 import 'create_trip_screen.dart';
@@ -22,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     const HomeDashboardTab(),
     const TripsScreen(),
+    const FavoritesScreen(), // Index 2 (NEW)
     const ProfileScreen(),
   ];
 
@@ -51,6 +53,11 @@ class _HomeScreenState extends State<HomeScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.map_outlined),
               label: "Trips",
+            ),
+            // Add Favorite Tab
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite_outline),
+              label: "Saved",
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
@@ -287,6 +294,11 @@ class HomeDashboardTab extends StatelessWidget {
                       imageUrl: trip.imagePath,
                       placesCount: 0,
                       daysCount: days,
+                      // Pass Favorite Data
+                      isFavorite: trip.isFavorite,
+                      onFavoriteTap: () {
+                        viewModel.toggleFavorite(trip);
+                      },
                       onTap: () {
                         Navigator.push(
                           context,

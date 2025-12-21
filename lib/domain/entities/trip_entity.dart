@@ -5,6 +5,7 @@ class TripEntity {
   final DateTime endDate;
   final String description;
   final String? imagePath;
+  final bool isFavorite; // Added this
 
   TripEntity({
     required this.id,
@@ -13,5 +14,6 @@ class TripEntity {
     required this.endDate,
     required this.description,
     this.imagePath,
+    this.isFavorite = false,
   });
 }

@@ -18,20 +18,24 @@ class LocalDataSource {
 
   Future<Database> _initDB() async {
     final dbPath = await getDatabasesPath();
-    // Keeping the name simple to avoid multiple db files
     final path = join(dbPath, 'travel_diary.db');
 
     return await openDatabase(
       path,
-      version: 2, // INCREASED VERSION TO TRIGGER UPDATES
+      version: 3, // BUMP VERSION to trigger upgrade
       onCreate: (db, version) async {
         await _createTripsTable(db);
         await _createExpensesTable(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
-        // This runs if you already have the app installed
         if (oldVersion < 2) {
           await _createExpensesTable(db);
+        }
+        // Migration for Version 3: Add isFavorite column
+        if (oldVersion < 3) {
+          await db.execute(
+            'ALTER TABLE trips ADD COLUMN isFavorite INTEGER DEFAULT 0',
+          );
         }
       },
     );
@@ -45,7 +49,8 @@ class LocalDataSource {
         startDate TEXT,
         endDate TEXT,
         description TEXT,
-        imagePath TEXT
+        imagePath TEXT,
+        isFavorite INTEGER DEFAULT 0
       )
     ''');
   }
@@ -64,7 +69,7 @@ class LocalDataSource {
     ''');
   }
 
-  // --- TRIP CRUD ---
+  // --- CRUD Operations (Unchanged logic, just relies on updated models) ---
   Future<void> insertTrip(TripModel trip) async {
     final db = await database;
     await db.insert(
@@ -98,7 +103,7 @@ class LocalDataSource {
     await db.delete('trips', where: 'id = ?', whereArgs: [id]);
   }
 
-  // --- EXPENSE CRUD ---
+  // Expenses methods remain the same...
   Future<void> insertExpense(ExpenseModel expense) async {
     final db = await database;
     await db.insert(
@@ -106,7 +111,6 @@ class LocalDataSource {
       expense.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    print("DEBUG: Expense added: ${expense.amount} to trip ${expense.tripId}");
   }
 
   Future<List<ExpenseModel>> getExpenses(String tripId) async {
@@ -117,7 +121,6 @@ class LocalDataSource {
       whereArgs: [tripId],
       orderBy: "date DESC",
     );
-    print("DEBUG: Loaded ${maps.length} expenses for trip $tripId");
     return List.generate(maps.length, (i) => ExpenseModel.fromMap(maps[i]));
   }
 
@@ -147,42 +150,53 @@ class LocalDataSource {
 
 //   Future<Database> _initDB() async {
 //     final dbPath = await getDatabasesPath();
+//     // Keeping the name simple to avoid multiple db files
 //     final path = join(dbPath, 'travel_diary.db');
 
 //     return await openDatabase(
 //       path,
-//       version: 1,
+//       version: 2, // INCREASED VERSION TO TRIGGER UPDATES
 //       onCreate: (db, version) async {
-//         await db.execute('''
-//           CREATE TABLE trips (
-//             id TEXT PRIMARY KEY,
-//             title TEXT,
-//             startDate TEXT,
-//             endDate TEXT,
-//             description TEXT,
-//             imagePath TEXT
-//           )
-//         ''');
-
-//         // 2. Expenses Table (New)
-//         await db.execute('''
-//           CREATE TABLE expenses (
-//             id TEXT PRIMARY KEY,
-//             tripId TEXT,
-//             amount REAL,
-//             category TEXT,
-//             date TEXT,
-//             note TEXT,
-//             FOREIGN KEY(tripId) REFERENCES trips(id) ON DELETE CASCADE
-//           )
-//         ''');
+//         await _createTripsTable(db);
+//         await _createExpensesTable(db);
+//       },
+//       onUpgrade: (db, oldVersion, newVersion) async {
+//         // This runs if you already have the app installed
+//         if (oldVersion < 2) {
+//           await _createExpensesTable(db);
+//         }
 //       },
 //     );
 //   }
 
-//   // --- CRUD Operations ---
+//   Future<void> _createTripsTable(Database db) async {
+//     await db.execute('''
+//       CREATE TABLE IF NOT EXISTS trips (
+//         id TEXT PRIMARY KEY,
+//         title TEXT,
+//         startDate TEXT,
+//         endDate TEXT,
+//         description TEXT,
+//         imagePath TEXT
+//       )
+//     ''');
+//   }
 
-//   // 1. Insert
+//   Future<void> _createExpensesTable(Database db) async {
+//     await db.execute('''
+//       CREATE TABLE IF NOT EXISTS expenses (
+//         id TEXT PRIMARY KEY,
+//         tripId TEXT,
+//         amount REAL,
+//         category TEXT,
+//         date TEXT,
+//         note TEXT,
+//         FOREIGN KEY(tripId) REFERENCES trips(id) ON DELETE CASCADE
+//       )
+//     ''');
+//   }
+
+//   // --- TRIP CRUD ---
 //   Future<void> insertTrip(TripModel trip) async {
 //     final db = await database;
 //     await db.insert(
@@ -192,7 +206,6 @@ class LocalDataSource {
 //     );
 //   }
 
-//   // 2. Get All
 //   Future<List<TripModel>> getTrips() async {
 //     final db = await database;
 //     final List<Map<String, dynamic>> maps = await db.query(
@@ -202,7 +215,6 @@ class LocalDataSource {
 //     return List.generate(maps.length, (i) => TripModel.fromMap(maps[i]));
 //   }
 
-//   // 3. Update (NEW)
 //   Future<void> updateTrip(TripModel trip) async {
 //     final db = await database;
 //     await db.update(
@@ -213,13 +225,12 @@ class LocalDataSource {
 //     );
 //   }
 
-//   // 4. Delete
 //   Future<void> deleteTrip(String id) async {
 //     final db = await database;
 //     await db.delete('trips', where: 'id = ?', whereArgs: [id]);
 //   }
 
-//   // --- EXPENSE CRUD (New) ---
+//   // --- EXPENSE CRUD ---
 //   Future<void> insertExpense(ExpenseModel expense) async {
 //     final db = await database;
 //     await db.insert(
@@ -227,6 +238,7 @@ class LocalDataSource {
 //       expense.toMap(),
 //       conflictAlgorithm: ConflictAlgorithm.replace,
 //     );
+//     print("DEBUG: Expense added: ${expense.amount} to trip ${expense.tripId}");
 //   }
 
 //   Future<List<ExpenseModel>> getExpenses(String tripId) async {
@@ -237,6 +249,7 @@ class LocalDataSource {
 //       whereArgs: [tripId],
 //       orderBy: "date DESC",
 //     );
+//     print("DEBUG: Loaded ${maps.length} expenses for trip $tripId");
 //     return List.generate(maps.length, (i) => ExpenseModel.fromMap(maps[i]));
 //   }
 
