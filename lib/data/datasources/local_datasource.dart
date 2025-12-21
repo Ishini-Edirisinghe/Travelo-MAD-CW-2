@@ -22,16 +22,13 @@ class LocalDataSource {
 
     return await openDatabase(
       path,
-      version: 3, // BUMP VERSION to trigger upgrade
+      version: 3, // Ensure this matches your current version
       onCreate: (db, version) async {
         await _createTripsTable(db);
         await _createExpensesTable(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 2) {
-          await _createExpensesTable(db);
-        }
-        // Migration for Version 3: Add isFavorite column
+        if (oldVersion < 2) await _createExpensesTable(db);
         if (oldVersion < 3) {
           await db.execute(
             'ALTER TABLE trips ADD COLUMN isFavorite INTEGER DEFAULT 0',
@@ -69,7 +66,7 @@ class LocalDataSource {
     ''');
   }
 
-  // --- CRUD Operations (Unchanged logic, just relies on updated models) ---
+  // --- TRIPS ---
   Future<void> insertTrip(TripModel trip) async {
     final db = await database;
     await db.insert(
@@ -103,7 +100,7 @@ class LocalDataSource {
     await db.delete('trips', where: 'id = ?', whereArgs: [id]);
   }
 
-  // Expenses methods remain the same...
+  // --- EXPENSES ---
   Future<void> insertExpense(ExpenseModel expense) async {
     final db = await database;
     await db.insert(
@@ -124,12 +121,22 @@ class LocalDataSource {
     return List.generate(maps.length, (i) => ExpenseModel.fromMap(maps[i]));
   }
 
+  // NEW: Update Expense
+  Future<void> updateExpense(ExpenseModel expense) async {
+    final db = await database;
+    await db.update(
+      'expenses',
+      expense.toMap(),
+      where: 'id = ?',
+      whereArgs: [expense.id],
+    );
+  }
+
   Future<void> deleteExpense(String id) async {
     final db = await database;
     await db.delete('expenses', where: 'id = ?', whereArgs: [id]);
   }
 }
-
 // import 'package:sqflite/sqflite.dart';
 // import 'package:path/path.dart';
 // import '../models/trip_model.dart';
@@ -150,20 +157,24 @@ class LocalDataSource {
 
 //   Future<Database> _initDB() async {
 //     final dbPath = await getDatabasesPath();
-//     // Keeping the name simple to avoid multiple db files
 //     final path = join(dbPath, 'travel_diary.db');
 
 //     return await openDatabase(
 //       path,
-//       version: 2, // INCREASED VERSION TO TRIGGER UPDATES
+//       version: 3, // BUMP VERSION to trigger upgrade
 //       onCreate: (db, version) async {
 //         await _createTripsTable(db);
 //         await _createExpensesTable(db);
 //       },
 //       onUpgrade: (db, oldVersion, newVersion) async {
-//         // This runs if you already have the app installed
 //         if (oldVersion < 2) {
 //           await _createExpensesTable(db);
+//         }
+//         // Migration for Version 3: Add isFavorite column
+//         if (oldVersion < 3) {
+//           await db.execute(
+//             'ALTER TABLE trips ADD COLUMN isFavorite INTEGER DEFAULT 0',
+//           );
 //         }
 //       },
 //     );
@@ -177,7 +188,8 @@ class LocalDataSource {
 //         startDate TEXT,
 //         endDate TEXT,
 //         description TEXT,
-//         imagePath TEXT
+//         imagePath TEXT,
+//         isFavorite INTEGER DEFAULT 0
 //       )
 //     ''');
 //   }
@@ -196,7 +208,7 @@ class LocalDataSource {
 //     ''');
 //   }
 
-//   // --- TRIP CRUD ---
+//   // --- CRUD Operations (Unchanged logic, just relies on updated models) ---
 //   Future<void> insertTrip(TripModel trip) async {
 //     final db = await database;
 //     await db.insert(
@@ -230,7 +242,7 @@ class LocalDataSource {
 //     await db.delete('trips', where: 'id = ?', whereArgs: [id]);
 //   }
 
-//   // --- EXPENSE CRUD ---
+//   // Expenses methods remain the same...
 //   Future<void> insertExpense(ExpenseModel expense) async {
 //     final db = await database;
 //     await db.insert(
@@ -238,7 +250,6 @@ class LocalDataSource {
 //       expense.toMap(),
 //       conflictAlgorithm: ConflictAlgorithm.replace,
 //     );
-//     print("DEBUG: Expense added: ${expense.amount} to trip ${expense.tripId}");
 //   }
 
 //   Future<List<ExpenseModel>> getExpenses(String tripId) async {
@@ -249,7 +260,6 @@ class LocalDataSource {
 //       whereArgs: [tripId],
 //       orderBy: "date DESC",
 //     );
-//     print("DEBUG: Loaded ${maps.length} expenses for trip $tripId");
 //     return List.generate(maps.length, (i) => ExpenseModel.fromMap(maps[i]));
 //   }
 
