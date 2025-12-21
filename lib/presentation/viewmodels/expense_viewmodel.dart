@@ -47,14 +47,14 @@ class ExpenseViewModel extends ChangeNotifier {
       );
 
       await repository.addExpense(newExpense);
-
-      // Reload to update the UI
       await loadExpenses(tripId);
     } catch (e) {
       print("ERROR ADDING EXPENSE: $e");
-      rethrow; // Pass error to UI
+      rethrow;
     }
   }
+
+  // --- STATS HELPERS ---
 
   double get totalExpenses =>
       _expenses.fold(0.0, (sum, item) => sum + item.amount);
@@ -67,7 +67,35 @@ class ExpenseViewModel extends ChangeNotifier {
     }
     return breakdown;
   }
+
+  // Insight: Average spending per day (based on recorded expense dates)
+  double get dailyAverage {
+    if (_expenses.isEmpty) return 0.0;
+    // Get unique dates
+    final uniqueDates = _expenses
+        .map((e) => DateTime(e.date.year, e.date.month, e.date.day))
+        .toSet();
+    if (uniqueDates.isEmpty) return 0.0;
+    return totalExpenses / uniqueDates.length;
+  }
+
+  // Insight: Category with highest spend
+  MapEntry<String, double> get highestExpenseCategory {
+    final breakdown = categoryBreakdown;
+    if (breakdown.isEmpty) return const MapEntry("None", 0.0);
+
+    return breakdown.entries.reduce((a, b) => a.value > b.value ? a : b);
+  }
+
+  // Insight: Category with lowest spend
+  MapEntry<String, double> get lowestExpenseCategory {
+    final breakdown = categoryBreakdown;
+    if (breakdown.isEmpty) return const MapEntry("None", 0.0);
+
+    return breakdown.entries.reduce((a, b) => a.value < b.value ? a : b);
+  }
 }
+
 // import 'package:flutter/material.dart';
 // import 'package:uuid/uuid.dart';
 // import '../../data/repositories/trip_repository_impl.dart';
@@ -84,27 +112,21 @@ class ExpenseViewModel extends ChangeNotifier {
 
 //   ExpenseViewModel({required this.repository});
 
-//   // lib/presentation/viewmodels/expense_viewmodel.dart
-
 //   Future<void> loadExpenses(String tripId) async {
 //     _isLoading = true;
 //     notifyListeners();
 
 //     try {
-//       // Attempt to load data
 //       _expenses = await repository.getExpenses(tripId);
 //     } catch (e) {
-//       // If there is an error (like missing table), catch it here
-//       print("Error loading expenses: $e");
-//       _expenses = []; // Fallback to empty list
-//     } finally {
-//       // This block runs NO MATTER WHAT (success or error)
-//       _isLoading = false;
-//       notifyListeners();
+//       print("ERROR LOADING EXPENSES: $e");
+//       _expenses = [];
 //     }
+
+//     _isLoading = false;
+//     notifyListeners();
 //   }
 
-//   // Add a new expense
 //   Future<void> addExpense({
 //     required String tripId,
 //     required double amount,
@@ -112,34 +134,34 @@ class ExpenseViewModel extends ChangeNotifier {
 //     required DateTime date,
 //     required String note,
 //   }) async {
-//     final newExpense = ExpenseEntity(
-//       id: const Uuid().v4(),
-//       tripId: tripId,
-//       amount: amount,
-//       category: category,
-//       date: date,
-//       note: note,
-//     );
+//     try {
+//       final newExpense = ExpenseEntity(
+//         id: const Uuid().v4(),
+//         tripId: tripId,
+//         amount: amount,
+//         category: category,
+//         date: date,
+//         note: note,
+//       );
 
-//     await repository.addExpense(newExpense);
-//     await loadExpenses(tripId); // Refresh list
+//       await repository.addExpense(newExpense);
+
+//       // Reload to update the UI
+//       await loadExpenses(tripId);
+//     } catch (e) {
+//       print("ERROR ADDING EXPENSE: $e");
+//       rethrow; // Pass error to UI
+//     }
 //   }
 
-//   // Helper: Calculate Total Expenses
-//   double get totalExpenses {
-//     return _expenses.fold(0.0, (sum, item) => sum + item.amount);
-//   }
+//   double get totalExpenses =>
+//       _expenses.fold(0.0, (sum, item) => sum + item.amount);
 
-//   // Helper: Get Expenses by Category for Charts/Stats
 //   Map<String, double> get categoryBreakdown {
 //     final Map<String, double> breakdown = {};
 //     for (var expense in _expenses) {
-//       if (breakdown.containsKey(expense.category)) {
-//         breakdown[expense.category] =
-//             breakdown[expense.category]! + expense.amount;
-//       } else {
-//         breakdown[expense.category] = expense.amount;
-//       }
+//       breakdown[expense.category] =
+//           (breakdown[expense.category] ?? 0) + expense.amount;
 //     }
 //     return breakdown;
 //   }

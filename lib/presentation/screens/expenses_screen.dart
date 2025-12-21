@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../viewmodels/expense_viewmodel.dart';
 import 'add_expense_screen.dart';
+import 'expense_summary_screen.dart'; // Import the new screen
 
 class ExpensesScreen extends StatefulWidget {
   final String tripId;
@@ -17,7 +18,6 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   @override
   void initState() {
     super.initState();
-    // Load expenses when screen opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ExpenseViewModel>(
         context,
@@ -118,7 +118,6 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // 1. Summary Card even if empty (showing 0)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: _buildSummaryCard(0.0),
@@ -169,7 +168,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF0077FF), Color(0xFF9933FF)],
-        ), // Blue to Purple
+        ),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -199,23 +198,36 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
             ],
           ),
           const SizedBox(height: 15),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.pie_chart_outline, color: Colors.white, size: 18),
-                SizedBox(width: 8),
-                Text(
-                  "View Summary & Reports",
-                  style: TextStyle(color: Colors.white),
+
+          // --- NAVIGATION TO SUMMARY SCREEN ---
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      ExpenseSummaryScreen(tripId: widget.tripId),
                 ),
-              ],
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.pie_chart_outline, color: Colors.white, size: 18),
+                  SizedBox(width: 8),
+                  Text(
+                    "View Summary & Reports",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -229,7 +241,6 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
 
     if (breakdown.isEmpty) return const SizedBox.shrink();
 
-    // Map categories to icons/colors helper
     IconData getIcon(String cat) {
       if (cat == 'Food') return Icons.fastfood;
       if (cat == 'Stay') return Icons.hotel;
