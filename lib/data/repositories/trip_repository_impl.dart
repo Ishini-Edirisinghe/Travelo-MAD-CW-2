@@ -1,6 +1,8 @@
+import 'package:travelo/domain/entities/expense_entity.dart';
 import '../../domain/entities/trip_entity.dart';
 import '../datasources/local_datasource.dart';
 import '../models/trip_model.dart';
+import '../models/expense_model.dart';
 
 class TripRepositoryImpl {
   final LocalDataSource dataSource;
@@ -39,5 +41,26 @@ class TripRepositoryImpl {
     );
 
     await dataSource.updateTrip(tripModel);
+  }
+
+  // --- EXPENSES ---
+  Future<void> addExpense(ExpenseEntity expense) async {
+    final expenseModel = ExpenseModel(
+      id: expense.id,
+      tripId: expense.tripId,
+      amount: expense.amount,
+      category: expense.category,
+      date: expense.date,
+      note: expense.note,
+    );
+    await dataSource.insertExpense(expenseModel);
+  }
+
+  Future<List<ExpenseEntity>> getExpenses(String tripId) async {
+    return await dataSource.getExpenses(tripId);
+  }
+
+  Future<void> deleteExpense(String id) async {
+    await dataSource.deleteExpense(id);
   }
 }

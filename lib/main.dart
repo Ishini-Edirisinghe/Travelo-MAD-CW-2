@@ -1,15 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:travelo/presentation/viewmodels/expense_viewmodel.dart'
+    show ExpenseViewModel;
 import 'presentation/screens/splash_screen.dart';
 import 'data/datasources/local_datasource.dart';
 import 'data/repositories/trip_repository_impl.dart';
 import 'presentation/viewmodels/trip_viewmodel.dart';
-// Ensure correct path
 
-// void main() {
-//   runApp(const MyApp());
-// }
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -22,6 +20,10 @@ void main() async {
       providers: [
         ChangeNotifierProvider(
           create: (_) => TripViewModel(repository: tripRepository),
+        ),
+
+        ChangeNotifierProvider(
+          create: (_) => ExpenseViewModel(repository: tripRepository),
         ),
       ],
       child: const MyApp(),
