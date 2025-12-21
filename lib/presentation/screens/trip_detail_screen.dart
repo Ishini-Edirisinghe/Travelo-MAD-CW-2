@@ -256,17 +256,17 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                     crossAxisSpacing: 15,
                     childAspectRatio: 1.4,
                     children: [
-                      _buildActionCard(
-                        icon: Icons.book,
-                        title: "Journals",
-                        subtitle: "0 entries",
-                        color: const Color(0xFF2D9CDB),
-                        onTap: () {},
-                      ),
+                      // _buildActionCard(
+                      //   icon: Icons.book,
+                      //   title: "Journals",
+                      //   subtitle: "0 entries",
+                      //   color: const Color(0xFF2D9CDB),
+                      //   onTap: () {},
+                      // ),
                       _buildActionCard(
                         icon: Icons.attach_money,
                         title: "Expenses",
-                        subtitle: "\$0 spent",
+                        subtitle: "",
                         color: const Color(0xFF9B51E0),
                         onTap: () {
                           Navigator.push(
