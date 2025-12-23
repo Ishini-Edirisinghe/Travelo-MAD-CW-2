@@ -1,6 +1,6 @@
 class ExpenseEntity {
   final String id;
-  final String tripId; // Links expense to a specific trip
+  final String tripId;
   final double amount;
   final String category;
   final DateTime date;

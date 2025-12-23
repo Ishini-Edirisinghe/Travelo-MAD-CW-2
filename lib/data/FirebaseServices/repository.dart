@@ -5,7 +5,6 @@ import 'package:travelo/data/models/AuthResult.dart';
 class Repository extends FirebaseHelper {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // ---------------- SIGN IN ----------------
   Future<AuthResult> signIn({
     required String email,
     required String password,
@@ -37,7 +36,6 @@ class Repository extends FirebaseHelper {
     }
   }
 
-  // ---------------- SIGN UP ----------------
   Future<AuthResult> signUp({
     required String email,
     required String password,
@@ -73,7 +71,6 @@ class Repository extends FirebaseHelper {
     }
   }
 
-  // ---------------- SIGN OUT ----------------
   Future<void> signOut() async {
     await _auth.signOut();
   }

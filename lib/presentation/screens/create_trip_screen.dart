@@ -68,7 +68,6 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     }
   }
 
-  // Helper Widget for Labels
   Widget _buildLabel(String text, {bool isRequired = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8, left: 2),
@@ -92,7 +91,6 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     );
   }
 
-  // Helper Widget for Text Fields
   Widget _buildTextField({
     required TextEditingController controller,
     required String hint,
@@ -247,7 +245,6 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                   return;
                 }
 
-                // 1. Create the Trip Object
                 final newTrip = TripEntity(
                   id: DateTime.now().millisecondsSinceEpoch.toString(),
                   title: _destinationController.text,
@@ -257,7 +254,6 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                   imagePath: _selectedImage?.path,
                 );
 
-                // 2. Save via Provider
                 Provider.of<TripViewModel>(
                   context,
                   listen: false,

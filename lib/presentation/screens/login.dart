@@ -11,7 +11,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Controllers for text fields
   final Repository repo = Repository();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -22,7 +21,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // 1. Background Gradient
           Container(
             height: double.infinity,
             width: double.infinity,
@@ -31,14 +29,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Color(0xFF6A5AE0), // Purple top
-                  Color(0xFFE252CA), // Pink bottom
+                  Color(0xFF6A5AE0),
+                  Color(0xFFE252CA),
                 ],
               ),
             ),
           ),
 
-          // 2. The White Card
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -53,7 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Header Icon
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -83,7 +79,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 30),
 
-                      // Email Field
                       _buildLabel("Email"),
                       _buildTextField(
                         controller: _emailController,
@@ -92,7 +87,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Password Field
                       _buildLabel("Password"),
                       _buildTextField(
                         controller: _passwordController,
@@ -103,7 +97,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Login Button
                       SizedBox(
                         width: double.infinity,
                         height: 48,
@@ -139,8 +132,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
 
                       const SizedBox(height: 20),
-
-                      // "Don't have an account?" -> Navigates to RegisterScreen
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -150,7 +141,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              // Navigate to Register Screen
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
@@ -180,7 +170,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Helper for Labels
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6, left: 2),
@@ -194,7 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Helper for Text Fields
   Widget _buildTextField({
     required TextEditingController controller,
     required String hint,

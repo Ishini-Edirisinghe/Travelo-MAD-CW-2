@@ -17,7 +17,6 @@ class _TripsScreenState extends State<TripsScreen> {
   @override
   void initState() {
     super.initState();
-    // Refresh data when this screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<TripViewModel>(context, listen: false).loadTrips();
     });
@@ -35,7 +34,7 @@ class _TripsScreenState extends State<TripsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        automaticallyImplyLeading: false, // Remove back button on tab
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.add, color: Color(0xFF6A5AE0)),
@@ -64,15 +63,13 @@ class _TripsScreenState extends State<TripsScreen> {
             itemBuilder: (context, index) {
               final trip = viewModel.trips[index];
 
-              // Date Formatting
               final dateRange =
                   "${DateFormat('MMM d').format(trip.startDate)} - ${DateFormat('MMM d, yyyy').format(trip.endDate)}";
               final days = trip.endDate.difference(trip.startDate).inDays + 1;
 
-              // --- SWIPE TO DELETE WRAPPER ---
               return Dismissible(
-                key: Key(trip.id), // Unique Key for Dismissible
-                direction: DismissDirection.endToStart, // Swipe Right to Left
+                key: Key(trip.id),
+                direction: DismissDirection.endToStart,
                 background: Container(
                   margin: const EdgeInsets.only(bottom: 24),
                   padding: const EdgeInsets.only(right: 20),
@@ -96,7 +93,6 @@ class _TripsScreenState extends State<TripsScreen> {
                     ],
                   ),
                 ),
-                // 1. Confirm Dialog before deleting
                 confirmDismiss: (direction) async {
                   return await showDialog(
                     context: context,
@@ -123,20 +119,15 @@ class _TripsScreenState extends State<TripsScreen> {
                     },
                   );
                 },
-                // 2. Action after swipe is confirmed
                 onDismissed: (direction) {
-                  // Call delete in ViewModel
                   viewModel.deleteTrip(trip.id);
 
-                  // Show snackbar confirmation
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text("${trip.title} deleted"),
                       action: SnackBarAction(
                         label: "Undo",
                         onPressed: () {
-                          // Optional: Add logic to re-add trip if needed
-                          // For now, simpler to just delete
                           viewModel.addTrip(trip);
                         },
                       ),

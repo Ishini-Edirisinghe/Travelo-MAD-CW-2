@@ -6,8 +6,8 @@ import '../../domain/entities/trip_entity.dart';
 import '../../data/datasources/local_datasource.dart';
 import '../../data/repositories/trip_repository_impl.dart';
 import 'edit_trip_screen.dart';
-import '../../presentation/viewmodels/trip_viewmodel.dart'; // Adjust path if needed
-import 'expenses_screen.dart'; // IMPORT THIS
+import '../../presentation/viewmodels/trip_viewmodel.dart';
+import 'expenses_screen.dart';
 
 class TripDetailScreen extends StatefulWidget {
   final TripEntity trip;
@@ -28,7 +28,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   }
 
   Future<void> _handleEditTrip(BuildContext context) async {
-    // 1. Navigate to Edit Screen
     final updatedTrip = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -36,25 +35,17 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
       ),
     );
 
-    // 2. Check result
     if (updatedTrip != null && updatedTrip is TripEntity) {
       try {
-        // A. Update Database
         final repository = TripRepositoryImpl(LocalDataSource());
         await repository.updateTrip(updatedTrip);
 
-        // B. Update Local UI (Detail Screen)
         setState(() {
           _currentTrip = updatedTrip;
         });
-
-        // C. Update Global State (Home/List Screen)
-        // This ensures the list screen gets the new data immediately
         if (mounted) {
           Provider.of<TripViewModel>(context, listen: false).loadTrips();
         }
-
-        // D. Success Message
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -78,7 +69,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Calculate Duration using _currentTrip (so it updates dynamically)
     final daysCount =
         _currentTrip.endDate.difference(_currentTrip.startDate).inDays + 1;
     final dateRange =
@@ -93,7 +83,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                // A. Cover Image
                 SizedBox(
                   height: 320,
                   width: double.infinity,
@@ -116,7 +105,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                         ),
                 ),
 
-                // B. Gradient Overlay
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
@@ -133,7 +121,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                   ),
                 ),
 
-                // C. Navigation Bar
                 Positioned(
                   top: 50,
                   left: 20,
@@ -143,17 +130,16 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                     children: [
                       _buildCircleButton(
                         icon: Icons.arrow_back,
-                        onTap: () => Navigator.pop(context), // Go back to list
+                        onTap: () => Navigator.pop(context),
                       ),
                       _buildCircleButton(
                         icon: Icons.edit_outlined,
-                        onTap: () => _handleEditTrip(context), // Trigger Edit
+                        onTap: () => _handleEditTrip(context),
                       ),
                     ],
                   ),
                 ),
 
-                // D. Title & Date
                 Positioned(
                   bottom: 80,
                   left: 20,
@@ -222,7 +208,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
 
             const SizedBox(height: 35),
 
-            // Description Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
@@ -256,13 +241,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                     crossAxisSpacing: 15,
                     childAspectRatio: 1.4,
                     children: [
-                      // _buildActionCard(
-                      //   icon: Icons.book,
-                      //   title: "Journals",
-                      //   subtitle: "0 entries",
-                      //   color: const Color(0xFF2D9CDB),
-                      //   onTap: () {},
-                      // ),
                       _buildActionCard(
                         icon: Icons.attach_money,
                         title: "Expenses",
@@ -290,7 +268,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     );
   }
 
-  // Helpers
   Widget _buildCircleButton({
     required IconData icon,
     required VoidCallback onTap,

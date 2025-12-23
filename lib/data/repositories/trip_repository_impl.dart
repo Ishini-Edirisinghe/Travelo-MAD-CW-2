@@ -9,7 +9,6 @@ class TripRepositoryImpl {
 
   TripRepositoryImpl(this.dataSource);
 
-  // --- TRIPS ---
   Future<void> addTrip(TripEntity trip) async {
     final tripModel = TripModel(
       id: trip.id,

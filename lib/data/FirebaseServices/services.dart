@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirebaseServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  ///Get
   Future<List<Map<String,dynamic>>> get({required String path})async{
     try{
       final snapshot = await _firestore.collection(path).get();
@@ -17,7 +16,6 @@ class FirebaseServices {
     }
   }
 
-  ///Insert
   Future<String> add({required String path, required Map<String,dynamic> data})async{
     try{
       final docReference = await _firestore.collection(path).add(data);
@@ -27,7 +25,6 @@ class FirebaseServices {
     }
   }
 
-  ///Update
   Future<bool> update({required String path, required Map<String,dynamic> data, required String docId})async{
     try{
       await _firestore.collection(path).doc(docId).update(data);
@@ -37,7 +34,6 @@ class FirebaseServices {
     }
   }
 
-  ///Delete
   Future<bool> delete({required String path, required String docId})async{
     try{
       await _firestore.collection(path).doc(docId).delete();
@@ -46,6 +42,4 @@ class FirebaseServices {
       return false;
     }
   }
-
-
  }

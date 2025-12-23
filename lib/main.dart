@@ -11,9 +11,7 @@ import 'presentation/viewmodels/trip_viewmodel.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // Initialize Architecture Layers
   final localDataSource = LocalDataSource();
-  // CORRECT (Positional Argument)
   final tripRepository = TripRepositoryImpl(localDataSource);
   runApp(
     MultiProvider(
@@ -41,7 +39,6 @@ class MyApp extends StatelessWidget {
       title: 'Travel Diary',
       theme: ThemeData(
         useMaterial3: true,
-        // This color scheme matches your purple/blue design
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6A5AE0)),
         scaffoldBackgroundColor: Colors.white,
       ),

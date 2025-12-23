@@ -6,7 +6,7 @@ import 'package:travelo/presentation/screens/favorites_screen.dart';
 import '../widgets/trip_card.dart';
 import '../viewmodels/trip_viewmodel.dart';
 import 'create_trip_screen.dart';
-import 'trips.dart'; // Ensure this matches your file name
+import 'trips.dart'; 
 import 'profile.dart';
 import 'trip_detail_screen.dart';
 
@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     const HomeDashboardTab(),
     const TripsScreen(),
-    const FavoritesScreen(), // Index 2 (NEW)
+    const FavoritesScreen(),
     const ProfileScreen(),
   ];
 
@@ -54,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: Icon(Icons.map_outlined),
               label: "Trips",
             ),
-            // Add Favorite Tab
             BottomNavigationBarItem(
               icon: Icon(Icons.favorite_outline),
               label: "Saved",
@@ -70,9 +69,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// ==========================================
-// THE MAIN DASHBOARD TAB
-// ==========================================
 class HomeDashboardTab extends StatelessWidget {
   const HomeDashboardTab({super.key});
 
@@ -87,7 +83,6 @@ class HomeDashboardTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. HEADER SECTION
           Stack(
             clipBehavior: Clip.none,
             children: [
@@ -147,15 +142,12 @@ class HomeDashboardTab extends StatelessWidget {
                 ),
               ),
 
-              // --- UPDATED STATS CARD ---
               Positioned(
                 top: 140,
                 left: 20,
                 right: 20,
-                // Using Consumer to listen to TripViewModel changes
                 child: Consumer<TripViewModel>(
                   builder: (context, viewModel, child) {
-                    // Get the dynamic count of trips
                     final String tripCount = viewModel.trips.length.toString();
 
                     return Container(
@@ -173,7 +165,7 @@ class HomeDashboardTab extends StatelessWidget {
                           _buildHeaderStat(
                             "Total Trips",
                             tripCount,
-                          ), // Dynamic Count
+                          ),
                         ],
                       ),
                     );
@@ -185,7 +177,6 @@ class HomeDashboardTab extends StatelessWidget {
 
           const SizedBox(height: 30),
 
-          // 2. QUICK ACTION
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: GestureDetector(
@@ -230,7 +221,6 @@ class HomeDashboardTab extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          // 3. RECENT TRIPS HEADER
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -242,7 +232,6 @@ class HomeDashboardTab extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    // Navigate to the full Trips Screen
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const TripsScreen()),
@@ -257,7 +246,6 @@ class HomeDashboardTab extends StatelessWidget {
             ),
           ),
 
-          // 4. TRIPS LIST (Limit to 2)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Consumer<TripViewModel>(
@@ -277,7 +265,6 @@ class HomeDashboardTab extends StatelessWidget {
                   );
                 }
 
-                // Show only the top 2 items
                 final recentTrips = viewModel.trips.take(2).toList();
 
                 return Column(
@@ -294,7 +281,6 @@ class HomeDashboardTab extends StatelessWidget {
                       imageUrl: trip.imagePath,
                       placesCount: 0,
                       daysCount: days,
-                      // Pass Favorite Data
                       isFavorite: trip.isFavorite,
                       onFavoriteTap: () {
                         viewModel.toggleFavorite(trip);

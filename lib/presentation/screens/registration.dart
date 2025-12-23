@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travelo/data/FirebaseServices/repository.dart';
-import 'login.dart'; // Import LoginScreen for navigation
+import 'login.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -10,7 +10,6 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  // Controllers
   final Repository repo = Repository();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -18,7 +17,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  // State Variables
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _agreedToTerms = false;
@@ -37,7 +35,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // 1. Background Gradient (Consistent with Login/Splash)
           Container(
             height: double.infinity,
             width: double.infinity,
@@ -46,14 +43,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Color(0xFF6A5AE0), // Purple top
-                  Color(0xFFE252CA), // Pink bottom
+                  Color(0xFF6A5AE0),
+                  Color(0xFFE252CA),
                 ],
               ),
             ),
           ),
 
-          // 2. The White Card
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
@@ -68,7 +64,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Header Icon
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -98,7 +93,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 25),
 
-                      // Full Name
                       _buildLabel("Full Name"),
                       _buildTextField(
                         controller: _nameController,
@@ -107,7 +101,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Email
                       _buildLabel("Email"),
                       _buildTextField(
                         controller: _emailController,
@@ -116,7 +109,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Password
                       _buildLabel("Password"),
                       _buildTextField(
                         controller: _passwordController,
@@ -132,7 +124,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Confirm Password
                       _buildLabel("Confirm Password"),
                       _buildTextField(
                         controller: _confirmPasswordController,
@@ -149,7 +140,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Terms & Conditions Checkbox
                       Row(
                         children: [
                           SizedBox(
@@ -201,13 +191,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 24),
 
-                      // Create Account Button
                       SizedBox(
                         width: double.infinity,
                         height: 48,
                         child: ElevatedButton(
                           onPressed: () async {
-                            // Check if terms are agreed
                             if (!_agreedToTerms) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -216,8 +204,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               );
                               return;
                             }
-
-                            // Check if fields are not empty
                             if (_nameController.text.isEmpty ||
                                 _emailController.text.isEmpty ||
                                 _passwordController.text.isEmpty) {
@@ -226,8 +212,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               );
                               return;
                             }
-
-                            // Call your sign-up logic
                             final res = await repo.signUp(
                               fullName: _nameController.text,
                               email: _emailController.text,
@@ -265,7 +249,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                       const SizedBox(height: 20),
 
-                      // "Already have an account? Login"
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -304,7 +287,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  // Helper Widget for Labels
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6, left: 2),
@@ -318,7 +300,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  // Helper Widget for Text Fields
   Widget _buildTextField({
     required TextEditingController controller,
     required String hint,

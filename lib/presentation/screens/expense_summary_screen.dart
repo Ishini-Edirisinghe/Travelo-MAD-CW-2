@@ -13,7 +13,6 @@ class ExpenseSummaryScreen extends StatefulWidget {
 }
 
 class _ExpenseSummaryScreenState extends State<ExpenseSummaryScreen> {
-  // Helper to map colors
   Color _getCategoryColor(String cat) {
     switch (cat) {
       case 'Food':
@@ -33,10 +32,8 @@ class _ExpenseSummaryScreenState extends State<ExpenseSummaryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Ensure we have latest data
     final viewModel = Provider.of<ExpenseViewModel>(context);
 
-    // Stats
     final total = viewModel.totalExpenses;
     final breakdown = viewModel.categoryBreakdown;
     final avgDaily = viewModel.dailyAverage;
@@ -59,13 +56,11 @@ class _ExpenseSummaryScreenState extends State<ExpenseSummaryScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        // ACTIONS REMOVED (Download Button)
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // 1. Header Card (Gradient)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -108,8 +103,6 @@ class _ExpenseSummaryScreenState extends State<ExpenseSummaryScreen> {
             ),
 
             const SizedBox(height: 20),
-
-            // 2. Pie Chart Section
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -151,7 +144,6 @@ class _ExpenseSummaryScreenState extends State<ExpenseSummaryScreen> {
                           ),
                   ),
                   const SizedBox(height: 20),
-                  // Legend within the chart card
                   Wrap(
                     spacing: 16,
                     runSpacing: 8,
@@ -184,8 +176,6 @@ class _ExpenseSummaryScreenState extends State<ExpenseSummaryScreen> {
             ),
 
             const SizedBox(height: 20),
-
-            // 3. Category Breakdown List
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -234,12 +224,10 @@ class _ExpenseSummaryScreenState extends State<ExpenseSummaryScreen> {
             ),
 
             const SizedBox(height: 20),
-
-            // 4. Budget Insights
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFFF1F3FF), // Light bluish background
+                color: const Color(0xFFF1F3FF),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
@@ -259,8 +247,6 @@ class _ExpenseSummaryScreenState extends State<ExpenseSummaryScreen> {
                 ],
               ),
             ),
-
-            // EXPORT BUTTON REMOVED as requested
             const SizedBox(height: 20),
           ],
         ),
